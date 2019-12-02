@@ -35,7 +35,7 @@ class CustomAirtestCase(AirtestCase):
                 script = os.path.join(root_dir, f)
 
                 print(script)
-                now = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S-')
+                now = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S-')
 
                 log = os.path.join(root_dir, 'log' + '\\' + airName.replace('.air', ''))
                 print(log)
@@ -44,7 +44,7 @@ class CustomAirtestCase(AirtestCase):
                 else:
                     os.makedirs(log)
                     print(str(log) + 'is created')
-                output_file = log + '\\' + now+'-log.html'
+                output_file = log + '\\' + 'log.html'
                 args = Namespace(device=device, log=log, recording=None, script=script)
                 try:
                     run_script(args, AirtestCase)
@@ -55,6 +55,7 @@ class CustomAirtestCase(AirtestCase):
                     rpt.report("log_template.html", output_file=output_file)
                     result = {}
                     result["name"] = airName.replace('.air', '')
+
                     result["result"] = rpt.test_result
                     results.append(result)
         # 生成聚合报告
@@ -63,14 +64,10 @@ class CustomAirtestCase(AirtestCase):
             extensions=(),
             autoescape=True
         )
-        File_Path = root_dir + "\\"+"report"
 
-        if not os.path.exists(File_Path):
-                # 目录不存在，进行创建操作
-            os.makedirs(File_Path)
-        template = env.get_template("summary_template.html", root_dir)
+        template = env.get_template("summary_template.html", log)
         html = template.render({"results": results})
-        output_file = os.path.join(File_Path, now+"-summary.html")
+        output_file = os.path.join(root_dir, now+"-summary.html")
         with io.open(output_file, 'w', encoding="utf-8") as f:
             f.write(html)
         print(output_file)
@@ -79,6 +76,6 @@ class CustomAirtestCase(AirtestCase):
 if __name__ == '__main__':
     test = CustomAirtestCase()
     device = ['android://127.0.0.1:5037/127.0.0.1:7555']
-    test.run_air('C:\\Users\\dbk\\AppData\\Local\\Programs\\Python\\Python35\\airtestCase\\case', device)
+    test.run_air('C:\\Users\\dbk\\AppData\\Local\\Programs\\Python\\Python35\\airtestCase\\case', device=['android://127.0.0.1:5037/127.0.0.1:7555'])
 
 
